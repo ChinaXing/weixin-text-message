@@ -27,7 +27,8 @@ data WxTextMessage = WxTextMsg
      ,msgType :: Text
      ,msgContent :: Text
      ,msgId :: Text
-     }
+     } deriving (Show, Eq)
+
 buildWxTextMessage :: String -> String -> Int -> String -> String -> String -> WxTextMessage
 buildWxTextMessage t f c tt cc i = WxTextMsg {
                    toUser = pack t
@@ -36,7 +37,8 @@ buildWxTextMessage t f c tt cc i = WxTextMsg {
                   ,msgType =pack  tt
                   ,msgContent = pack cc
                   ,msgId = pack i
-                 }                       
+                 } 
+
 getDocument :: WxTextMessage -> Document
 getDocument msg =
   Document (Prologue [] Nothing [])
@@ -63,7 +65,7 @@ parseWxTextMessage  str = do
   doc <- parseText def $ LT.fromChunks [pack str]
   let cursor =  fromDocument doc
       _toUser =  concat $ cursor $// element "ToUserName" &// content
-      _fromUser = concat $ cursor $// element "FromUser" &// content
+      _fromUser = concat $ cursor $// element "FromUserName" &// content
       _createTime = concat $ cursor $// element "CreateTime" &// content
       _msgType = concat $ cursor $// element "MsgType" &// content
       _msgContent = concat $ cursor $// element "Content" &// content
